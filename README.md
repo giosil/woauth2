@@ -39,7 +39,7 @@ Content-Type: application/json;charset=UTF-8
 ```
 
 
-## Get user info
+## Get user info (Standard Claims OpenId)
 
 **Request:**
 
