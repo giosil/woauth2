@@ -28,7 +28,18 @@ Content-type: application/x-www-form-urlencoded
 }
 ```
 
-## Get User Info
+
+**Failure:**
+
+```
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json;charset=UTF-8
+
+{"error":"access_denied", "error_description":"Access denied"}
+```
+
+
+## Get user info
 
 **Request:**
 
@@ -48,6 +59,13 @@ Authorization: Bearer ea39e8df-b8c7-4024-9bdb-08b7ce808917
   "nickname"    : "admin",
   "email"       : "test.dev@example.com"
 }
+```
+
+**Failure:**
+
+```
+HTTP/1.1 403 Forbidden
+WWW-Authenticate: Bearer error="insufficient_scope" error_description="Bearer access token has insufficient privileges"
 ```
 
 ## Contributors
