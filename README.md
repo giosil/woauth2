@@ -11,8 +11,10 @@ A simple OAuth 2.0 protocol implementation.
 
 **Request:**
 
+```
 POST /woauth2/token HTTP/1.1
 Content-type: application/x-www-form-urlencoded
+```
 
 **grant_type**=password&**username**=admin&**password**=admin&**client_id**=test
 
@@ -30,8 +32,10 @@ Content-type: application/x-www-form-urlencoded
 
 **Request:**
 
+```
 GET /woauth2/userinfo HTTP/1.1
 Authorization: Bearer ea39e8df-b8c7-4024-9bdb-08b7ce808917
+```
 
 **Response:**
 
