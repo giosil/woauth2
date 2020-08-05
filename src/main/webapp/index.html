@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WOauth2</title>
+	</head>
+	<body>
+		<h1>WOauth2</h1>
+		<br/>
+		<form action="token" method="post">
+			Username: <input type="text" name="username"> Password: <input type="password" name="password"><br />
+			<input type="hidden" name="grant_type" value="password">
+			<input type="hidden" name="client_id" value="test">
+			<button type="submit">Login</button>
+		</form>
+	</body>
+</html>
