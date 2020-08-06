@@ -31,29 +31,44 @@ import javax.servlet.http.HttpServletResponse;
 public 
 class WebUserInfo extends HttpServlet 
 {
-  private static final long serialVersionUID = 471049230849878501L;
+  private static final long serialVersionUID = -4678484814492150466L;
+  
+  protected IOAuth2 oauth2;
+  
+  public
+  void init()
+    throws ServletException
+  {
+    oauth2 = new MockOAuth2();
+  }
   
   @Override
   protected 
   void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    String sAuthorization = request.getHeader("Authorization");
+    String token = request.getParameter("token");
     
-    if(sAuthorization == null || sAuthorization.length() == 0) {
-      response.addHeader("WWW-Authenticate", "Bearer");
-      response.sendError(401); // Unauthorized
-      return;
+    if(token == null || token.length() == 0) {
+      
+      String sAuthorization = request.getHeader("Authorization");
+      
+      if(sAuthorization == null || sAuthorization.length() == 0) {
+        response.addHeader("WWW-Authenticate", "Bearer");
+        response.sendError(401); // Unauthorized
+        return;
+      }
+      
+      if(!sAuthorization.startsWith("Bearer ") || sAuthorization.length() < 8) {
+        response.addHeader("WWW-Authenticate", "Bearer");
+        response.sendError(401); // Unauthorized
+        return;
+      }
+      
+      token = sAuthorization.substring(7);
     }
     
-    if(!sAuthorization.startsWith("Bearer ") || sAuthorization.length() < 8) {
-      response.addHeader("WWW-Authenticate", "Bearer");
-      response.sendError(401); // Unauthorized
-      return;
-    }
-    
-    String token = sAuthorization.substring(7);
-    if(token == null || token.length() < 2) {
+    if(token == null || token.length() < 4) {
       response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\" error_description=\"Invalid token\"");
       response.sendError(403); // Forbidden
       return;
@@ -62,7 +77,7 @@ class WebUserInfo extends HttpServlet
     UserInfo userInfo = null;
     try {
       
-      userInfo = readUserInfo(token);
+      userInfo = oauth2.getUserInfo(token);
     
     }
     catch(Exception ex) {
@@ -71,7 +86,7 @@ class WebUserInfo extends HttpServlet
     }
     
     if(userInfo == null) {
-      response.addHeader("WWW-Authenticate", "Bearer error=\"insufficient_scope\" error_description=\"Bearer access token has insufficient privileges\"");
+      response.addHeader("WWW-Authenticate", OAuthError.INVALID_TOKEN.toHeaderValue());
       response.sendError(403); // Forbidden
       return;
     }
@@ -88,25 +103,15 @@ class WebUserInfo extends HttpServlet
   }
   
   protected
-  UserInfo readUserInfo(String token)
-  {
-    if(token == null || token.length() == 0) {
-      return null;
-    }
-    
-    return new UserInfo("12345", "Test", "Dev", "admin", "test.dev@example.com");
-  }
-  
-  protected
   void sendReponse(HttpServletResponse response, UserInfo userInfo)
       throws ServletException, IOException
   {
     if(userInfo == null) return;
     
-    String jsonUserinfo = userInfo.toJson();
+    String content = userInfo.toJson();
     
     response.setContentType("application/json;charset=UTF-8");
-    response.setContentLength(jsonUserinfo.length());
-    response.getWriter().println(jsonUserinfo);
+    response.setContentLength(content.length());
+    response.getWriter().println(content);
   }
 }

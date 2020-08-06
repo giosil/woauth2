@@ -2,12 +2,18 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Bean TokenRequest.
+ */
 public 
 class TokenRequest implements Serializable
 {
-  private static final long serialVersionUID = 386263065295718046L;
+  private static final long serialVersionUID = -661009814854940618L;
   
   private String grantType;
   private String username;
@@ -25,6 +31,14 @@ class TokenRequest implements Serializable
   {
   }
   
+  public TokenRequest(String grantType, String username, String password, String clientId)
+  {
+    this.grantType = grantType;
+    this.username  = username;
+    this.password  = password;
+    this.clientId  = clientId;
+  }
+  
   public TokenRequest(HttpServletRequest request)
   {
     this.grantType    = request.getParameter("grant_type");
@@ -37,6 +51,20 @@ class TokenRequest implements Serializable
     this.code         = request.getParameter("code");
     this.codeVerifier = request.getParameter("code_verifier");
     this.redirectURI  = request.getParameter("redirect_uri");
+  }
+  
+  public TokenRequest(Map<String, Object> map)
+  {
+    this.grantType    = Utils.toString(map.get("grant_type"));
+    this.username     = Utils.toString(map.get("username"));
+    this.password     = Utils.toString(map.get("password"));
+    this.clientId     = Utils.toString(map.get("client_id"));
+    this.clientSecret = Utils.toString(map.get("client_secret"));
+    this.scope        = Utils.toString(map.get("scope"));
+    this.tenant       = Utils.toString(map.get("tenant"));
+    this.code         = Utils.toString(map.get("code"));
+    this.codeVerifier = Utils.toString(map.get("code_verifier"));
+    this.redirectURI  = Utils.toString(map.get("redirect_uri"));
   }
   
   public String getGrantType() {
@@ -118,7 +146,37 @@ class TokenRequest implements Serializable
   public void setRedirectURI(String redirectURI) {
     this.redirectURI = redirectURI;
   }
-
+  
+  public String toQueryString() {
+    StringBuilder sb = new StringBuilder();
+    Utils.appendParam(sb, "grant_type",    grantType);
+    Utils.appendParam(sb, "username",      username);
+    Utils.appendParam(sb, "password",      password);
+    Utils.appendParam(sb, "client_id",     clientId);
+    Utils.appendParam(sb, "client_secret", clientSecret);
+    Utils.appendParam(sb, "scope",         scope);
+    Utils.appendParam(sb, "tenant",        tenant);
+    Utils.appendParam(sb, "code",          code);
+    Utils.appendParam(sb, "code_verifier", codeVerifier);
+    Utils.appendParam(sb, "redirect_uri",  redirectURI);
+    return sb.toString();
+  }
+  
+  public Map<String, Object> toMap() {
+    Map<String, Object> mapResult = new HashMap<String, Object>();
+    mapResult.put("grant_type",    grantType);
+    mapResult.put("username",      username);
+    mapResult.put("password",      password);
+    mapResult.put("client_id",     clientId);
+    mapResult.put("client_secret", clientSecret);
+    mapResult.put("scope",         scope);
+    mapResult.put("tenant",        tenant);
+    mapResult.put("code",          code);
+    mapResult.put("code_verifier", codeVerifier);
+    mapResult.put("redirect_uri",  redirectURI);
+    return mapResult;
+  }
+  
   @Override
   public boolean equals(Object object) {
     if(object instanceof TokenRequest) {

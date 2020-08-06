@@ -2,14 +2,20 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Bean TokenResponse.
+ */
 public 
 class TokenResponse implements Serializable
 {
-  private static final long serialVersionUID = -6390127889288970145L;
+  private static final long serialVersionUID = 1189179673497581828L;
   
   private String accessToken;
   private String tokenType;
-  private int expiresIn;
+  private int    expiresIn;
   private String refreshToken;
   private String scope;
   private String idToken;
@@ -43,6 +49,18 @@ class TokenResponse implements Serializable
     this.tokenType   = tokenType;
     this.expiresIn   = expiresIn;
     this.scope       = scope;
+  }
+  
+  public TokenResponse(Map<String, Object> map)
+  {
+    if(map == null) return;
+    
+    this.accessToken  = Utils.toString(map.get("access_token"));
+    this.tokenType    = Utils.toString(map.get("token_type"));
+    this.expiresIn    = Utils.toInt(map.get("expires_in"));
+    this.refreshToken = Utils.toString(map.get("refresh_token"));
+    this.scope        = Utils.toString(map.get("scope"));
+    this.idToken      = Utils.toString(map.get("id_token"));
   }
   
   public String getAccessToken() {
@@ -111,6 +129,17 @@ class TokenResponse implements Serializable
     }
     result += "}";
     return result;
+  }
+  
+  public Map<String, Object> toMap() {
+    Map<String, Object> mapResult = new HashMap<String, Object>();
+    mapResult.put("access_token",  accessToken);
+    mapResult.put("token_type",    tokenType);
+    mapResult.put("expires_in",    expiresIn);
+    mapResult.put("refresh_token", refreshToken);
+    mapResult.put("scope",         scope);
+    mapResult.put("id_token",      idToken);
+    return mapResult;
   }
   
   @Override

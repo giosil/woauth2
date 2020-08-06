@@ -2,6 +2,9 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
+/**
+ * Bean UserInfo based on standard claims OpenId.
+ */
 public 
 class UserInfo implements Serializable
 {
