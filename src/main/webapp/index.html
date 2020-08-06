@@ -1,16 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<title>WOauth2</title>
 	</head>
 	<body>
 		<h1>WOauth2</h1>
-		<br/>
-		<form action="token" method="post">
-			Username: <input type="text" name="username"> Password: <input type="password" name="password"><br />
+		<br />
+		<h2>Request Token:</h2>
+		<br />
+		<form name="reqtok" action="token" method="post">
+			UserName: <input type="text" name="username" value="admin"> Password: <input type="password" name="password" value="admin"><br />
 			<input type="hidden" name="grant_type" value="password">
 			<input type="hidden" name="client_id" value="test">
-			<button type="submit">Login</button>
+			<br/>
+			<button type="submit">Request Token</button>
 		</form>
+		<br />
+		<hr />
+		<h2>Request Authorization:</h2>
+		<br />
+		<form name="reqaut" action="authorize" method="get">
+			Redirect URI: <input type="text" name="redirect_uri"> State: <input type="text" name="state" value="xyz"><br />
+			<input type="hidden" name="response_type" value="code">
+			<input type="hidden" name="client_id" value="test">
+			<br/>
+			<button type="submit">Authorize</button>
+		</form>
+		<br />
+		<hr />
+		<a href="https://tools.ietf.org/html/rfc6749">The OAuth 2.0 Authorization Framework</a>
+		<script>
+			window.onload = function() {
+				document.forms['reqaut'].elements["redirect_uri"].value = location.href + 'cb';
+			}
+		</script>
 	</body>
 </html>

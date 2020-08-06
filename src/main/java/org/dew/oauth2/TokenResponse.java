@@ -13,12 +13,12 @@ class TokenResponse implements Serializable
 {
   private static final long serialVersionUID = 1189179673497581828L;
   
-  private String accessToken;
-  private String tokenType;
-  private int    expiresIn;
-  private String refreshToken;
-  private String scope;
-  private String idToken;
+  private String accessToken;   // REQUIRED
+  private String tokenType;     // REQUIRED
+  private int    expiresIn;     // RECOMMENDED
+  private String refreshToken;  // OPTIONAL
+  private String scope;         // OPTIONAL
+  private String state;         // REQUIRED if present in the client authorization request.
   
   public TokenResponse()
   {
@@ -60,7 +60,7 @@ class TokenResponse implements Serializable
     this.expiresIn    = Utils.toInt(map.get("expires_in"));
     this.refreshToken = Utils.toString(map.get("refresh_token"));
     this.scope        = Utils.toString(map.get("scope"));
-    this.idToken      = Utils.toString(map.get("id_token"));
+    this.state        = Utils.toString(map.get("state"));
   }
   
   public String getAccessToken() {
@@ -103,12 +103,12 @@ class TokenResponse implements Serializable
     this.scope = scope;
   }
 
-  public String getIdToken() {
-    return idToken;
+  public String getState() {
+    return state;
   }
 
-  public void setIdToken(String idToken) {
-    this.idToken = idToken;
+  public void setState(String state) {
+    this.state = state;
   }
 
   public String toJson() {
@@ -124,8 +124,8 @@ class TokenResponse implements Serializable
     if(scope != null && scope.length() > 0) {
       result += ",\"scope\":\"" + scope.replace('"', '\'') + "\"";
     }
-    if(idToken != null && idToken.length() > 0) {
-      result += ",\"id_token\":\"" + idToken.replace('"', '\'') + "\"";
+    if(state != null && state.length() > 0) {
+      result += ",\"state\":\"" + state.replace('"', '\'') + "\"";
     }
     result += "}";
     return result;
@@ -138,7 +138,7 @@ class TokenResponse implements Serializable
     mapResult.put("expires_in",    expiresIn);
     mapResult.put("refresh_token", refreshToken);
     mapResult.put("scope",         scope);
-    mapResult.put("id_token",      idToken);
+    mapResult.put("state",         state);
     return mapResult;
   }
   

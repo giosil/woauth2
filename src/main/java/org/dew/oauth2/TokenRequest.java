@@ -22,6 +22,7 @@ class TokenRequest implements Serializable
   private String clientSecret;
   private String scope;
   // Authorization
+  private String refreshToken;
   private String tenant;
   private String code;
   private String codeVerifier;
@@ -47,6 +48,8 @@ class TokenRequest implements Serializable
     this.clientId     = request.getParameter("client_id");
     this.clientSecret = request.getParameter("client_secret");
     this.scope        = request.getParameter("scope");
+    
+    this.refreshToken = request.getParameter("refresh_token");
     this.tenant       = request.getParameter("tenant");
     this.code         = request.getParameter("code");
     this.codeVerifier = request.getParameter("code_verifier");
@@ -61,6 +64,8 @@ class TokenRequest implements Serializable
     this.clientId     = Utils.toString(map.get("client_id"));
     this.clientSecret = Utils.toString(map.get("client_secret"));
     this.scope        = Utils.toString(map.get("scope"));
+    
+    this.refreshToken = Utils.toString(map.get("refresh_token"));
     this.tenant       = Utils.toString(map.get("tenant"));
     this.code         = Utils.toString(map.get("code"));
     this.codeVerifier = Utils.toString(map.get("code_verifier"));
@@ -115,6 +120,14 @@ class TokenRequest implements Serializable
     this.scope = scope;
   }
 
+  public String getRefreshToken() {
+    return refreshToken;
+  }
+
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
+  }
+
   public String getTenant() {
     return tenant;
   }
@@ -146,7 +159,7 @@ class TokenRequest implements Serializable
   public void setRedirectURI(String redirectURI) {
     this.redirectURI = redirectURI;
   }
-  
+
   public String toQueryString() {
     StringBuilder sb = new StringBuilder();
     Utils.appendParam(sb, "grant_type",    grantType);
@@ -155,6 +168,7 @@ class TokenRequest implements Serializable
     Utils.appendParam(sb, "client_id",     clientId);
     Utils.appendParam(sb, "client_secret", clientSecret);
     Utils.appendParam(sb, "scope",         scope);
+    Utils.appendParam(sb, "refresh_token", refreshToken);
     Utils.appendParam(sb, "tenant",        tenant);
     Utils.appendParam(sb, "code",          code);
     Utils.appendParam(sb, "code_verifier", codeVerifier);
@@ -170,6 +184,7 @@ class TokenRequest implements Serializable
     mapResult.put("client_id",     clientId);
     mapResult.put("client_secret", clientSecret);
     mapResult.put("scope",         scope);
+    mapResult.put("refresh_token", refreshToken);
     mapResult.put("tenant",        tenant);
     mapResult.put("code",          code);
     mapResult.put("code_verifier", codeVerifier);

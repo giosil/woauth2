@@ -5,18 +5,21 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Bean error.
  */
 public 
 class OAuthError implements Serializable
 {
-  private static final long serialVersionUID = 2274563675583367515L;
+  private static final long serialVersionUID = -3320659035189342994L;
   
   private int    httpStatus;
   private String error;
   private String errorDescription;
   private String errorURI;
+  private String state;
   
   public final static OAuthError SERVER_ERROR        = new OAuthError(500, "server_error",        "Internal server error.");
   public final static OAuthError INVALID_REQUEST     = new OAuthError(400, "invalid_request",     "Invalid request.");
@@ -65,12 +68,22 @@ class OAuthError implements Serializable
     this.errorDescription = ex != null ? ex.toString() : "Internal server error";
   }
   
+  public OAuthError(HttpServletRequest request)
+  {
+    this.httpStatus       = 302; // Found
+    this.error            = request.getParameter("error");
+    this.errorDescription = request.getParameter("error_description");
+    this.errorURI         = request.getParameter("error_uri");
+    this.state            = request.getParameter("state");
+  }
+  
   public OAuthError(Map<String, Object> map)
   {
     this.httpStatus       = Utils.toInt(map.get("http_status"));;
     this.error            = Utils.toString(map.get("error"));
     this.errorDescription = Utils.toString(map.get("error_description"));
     this.errorURI         = Utils.toString(map.get("error_uri"));
+    this.state            = Utils.toString(map.get("state"));
   }
 
   public String getError() {
@@ -106,6 +119,14 @@ class OAuthError implements Serializable
     this.httpStatus = httpStatus;
   }
   
+  public String getState() {
+    return state;
+  }
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
   public String toJson() {
     if(error == null) error = "";
     
@@ -116,6 +137,9 @@ class OAuthError implements Serializable
     }
     if(errorURI != null && errorURI.length() > 0) {
       result += ",\"error_uri\":\"" + errorURI.replace('"', '\'') + "\"";
+    }
+    if(state != null && state.length() > 0) {
+      result += ",\"state\":\"" + state.replace('"', '\'') + "\"";
     }
     result += "}";
     return result;
@@ -131,7 +155,21 @@ class OAuthError implements Serializable
     if(errorURI != null && errorURI .length() > 0) {
       result += " error_uri=\"" + errorURI.replace('"', '\'') + "\"";
     }
+    if(state != null && state .length() > 0) {
+      result += " state=\"" + state.replace('"', '\'') + "\"";
+    }
     return result;
+  }
+  
+  public String toQueryString() {
+    if(error == null) error = "";
+    
+    StringBuilder sb = new StringBuilder();
+    Utils.appendParam(sb, "error",             error);
+    Utils.appendParam(sb, "error_description", errorDescription);
+    Utils.appendParam(sb, "error_uri",         errorURI);
+    Utils.appendParam(sb, "state",             state);
+    return sb.toString();
   }
   
   public Map<String, Object> toMap() {
@@ -139,6 +177,7 @@ class OAuthError implements Serializable
     mapResult.put("error",             error);
     mapResult.put("error_description", errorDescription);
     mapResult.put("error_uri",         errorURI);
+    mapResult.put("state",             state);
     return mapResult;
   }
   

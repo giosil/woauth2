@@ -69,7 +69,7 @@ class WebUserInfo extends HttpServlet
     }
     
     if(token == null || token.length() < 4) {
-      response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\" error_description=\"Invalid token\"");
+      response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\" error_description=\"Invalid token.\"");
       response.sendError(403); // Forbidden
       return;
     }

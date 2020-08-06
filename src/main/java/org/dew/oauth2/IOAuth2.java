@@ -7,12 +7,29 @@ public
 interface IOAuth2 
 {
   /**
+   * Validation authorization request.
+   * 
+   * @param authorizationRequest AuthorizationRequest
+   * @return OAuthError, null if authorizationRequest is valid.
+   */
+  public OAuthError validateAuthorizationRequest(AuthorizationRequest authorizationRequest);
+  
+  /**
    * Validation token request.
    * 
    * @param tokenRequest TokenRequest
    * @return OAuthError, null if tokenRequest is valid.
    */
   public OAuthError validateTokenRequest(TokenRequest tokenRequest);
+  
+  /**
+   * Request token authorization.
+   * 
+   * @param authorizationRequest AuthorizationRequest
+   * @return AuthorizationResponse, null if not authenticated / authorized.
+   * @throws Exception
+   */
+  public AuthorizationResponse requestAuthorization(AuthorizationRequest authorizationRequest) throws Exception;
   
   /**
    * Request token.
