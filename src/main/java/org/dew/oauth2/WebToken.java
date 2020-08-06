@@ -2,6 +2,8 @@ package org.dew.oauth2;
 
 import java.io.IOException;
 
+import java.util.Base64;
+
 import javax.servlet.ServletException;
 
 import javax.servlet.annotation.WebServlet;
@@ -40,7 +42,7 @@ class WebToken extends HttpServlet
   void init()
     throws ServletException
   {
-    oauth2 = new MockOAuth2();
+    oauth2 = new BaseOAuth2();
   }
   
   @Override
@@ -57,6 +59,32 @@ class WebToken extends HttpServlet
       throws ServletException, IOException
   {
     TokenRequest tokenRequest = new TokenRequest(request);
+    
+    String grantType = tokenRequest.getGrantType();
+    
+    if("client_credentials".equals(grantType)) {
+      String authorization = request.getHeader("Authorization");
+      if(authorization == null || authorization.length() == 0) {
+        response.setHeader("WWW-Authenticate", "Basic realm=\"OAuth2\"");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        return;
+      }
+      try {
+        byte[] basic = Base64.getDecoder().decode(authorization.substring(5).trim());
+        if(basic != null && basic.length > 0) {
+          String credentials = new String(basic);
+          int sep = credentials.indexOf(':');
+          if(sep > 0) {
+            tokenRequest.setUsername(credentials.substring(0,sep));
+            tokenRequest.setPassword(credentials.substring(sep+1));
+          }
+        }
+      }
+      catch(Exception ex) {
+        sendError(response, new OAuthError(ex));
+        return;
+      }
+    }
     
     OAuthError error = oauth2.validateTokenRequest(tokenRequest);
     

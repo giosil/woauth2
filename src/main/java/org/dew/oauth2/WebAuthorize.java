@@ -34,7 +34,7 @@ class WebAuthorize extends HttpServlet
   void init()
     throws ServletException
   {
-    oauth2 = new MockOAuth2();
+    oauth2 = new BaseOAuth2();
   }
   
   @Override

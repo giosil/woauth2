@@ -15,7 +15,7 @@ class TokenRequest implements Serializable
 {
   private static final long serialVersionUID = -661009814854940618L;
   
-  private String grantType;
+  private String grantType; // authorization_code, password, client_credentials, refresh_token
   private String username;
   private String password;
   private String clientId;

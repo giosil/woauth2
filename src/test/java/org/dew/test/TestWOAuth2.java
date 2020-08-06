@@ -1,7 +1,7 @@
 package org.dew.test;
 
 import org.dew.oauth2.IOAuth2;
-import org.dew.oauth2.MockOAuth2;
+import org.dew.oauth2.BaseOAuth2;
 import org.dew.oauth2.OAuthError;
 import org.dew.oauth2.TokenRequest;
 import org.dew.oauth2.TokenResponse;
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
 
 public class TestWOAuth2 extends TestCase {
   
-  protected IOAuth2 oauth2 = new MockOAuth2();
+  protected IOAuth2 oauth2 = new BaseOAuth2();
   
   public TestWOAuth2(String testName) {
     super(testName);

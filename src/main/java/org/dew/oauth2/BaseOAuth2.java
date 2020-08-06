@@ -3,10 +3,10 @@ package org.dew.oauth2;
 import java.util.UUID;
 
 /**
- * Test implementation of IOAuth2.
+ * Base implementation of IOAuth2.
  */
 public 
-class MockOAuth2 implements IOAuth2 
+class BaseOAuth2 implements IOAuth2 
 {
   @Override
   public OAuthError validateAuthorizationRequest(AuthorizationRequest authorizationRequest) {
@@ -62,21 +62,36 @@ class MockOAuth2 implements IOAuth2
     String clientId     = tokenRequest.getClientId();
     String clientSecret = tokenRequest.getClientSecret();
     String scope        = tokenRequest.getScope();
+    String code         = tokenRequest.getCode();
+    String refreshToken = tokenRequest.getRefreshToken();
     
     if(grantType == null || grantType.length() == 0) {
       return new OAuthError(400, "invalid_request", "Request was missing the 'grant_type' parameter.");
     }
     
-    if(!"password".equals(grantType)) {
+    if(!"authorization_code".equals(grantType) && !"password".equals(grantType) && 
+        !"client_credentials".equals(grantType) && !"refresh_token".equals(grantType)) {
       return new OAuthError(400, "unsupported_grant_type", "Unsupported grant_type.");
     }
     
-    if(username == null || username.length() == 0) {
-      return new OAuthError(400, "invalid_request", "Request was missing the 'username' parameter.");
+    if("authorization_code".equals(grantType)) {
+      if(code == null || code.length() == 0) {
+        return new OAuthError(400, "invalid_request", "Request was missing the 'code' parameter.");
+      }
     }
-    
-    if(password == null || password.length() == 0) {
-      return new OAuthError(400, "invalid_request", "Request was missing the 'password' parameter.");
+    else if("refresh_token".equals(grantType)) {
+      if(refreshToken == null || refreshToken.length() == 0) {
+        return new OAuthError(400, "invalid_request", "Request was missing the 'refresh_token' parameter.");
+      }
+    }
+    else {
+      if(username == null || username.length() == 0) {
+        return new OAuthError(400, "invalid_request", "Request was missing the 'username' parameter.");
+      }
+      
+      if(password == null || password.length() == 0) {
+        return new OAuthError(400, "invalid_request", "Request was missing the 'password' parameter.");
+      }
     }
     
     if(clientId != null && clientId.length() > 0 && !clientId.equals("test")) {
@@ -120,7 +135,19 @@ class MockOAuth2 implements IOAuth2
     
     if(tokenRequest == null) return null;
     
-    String accessToken = authenticate(tokenRequest);
+    String grantType    = tokenRequest.getGrantType();
+    
+    String accessToken = null;
+    
+    if("authorization_code".equals(grantType)) {
+      accessToken = checkAuthorizationCode(tokenRequest);
+    }
+    else if("refresh_token".equals(grantType)) {
+      accessToken = refreshToken(tokenRequest);
+    }
+    else {
+      accessToken = authenticate(tokenRequest);
+    }
     
     if(accessToken == null || accessToken.length() == 0) {
       return null;
@@ -137,6 +164,36 @@ class MockOAuth2 implements IOAuth2
     }
     
     return new UserInfo("12345", "Test", "Dev", "admin", "test.dev@example.com");
+  }
+  
+  protected
+  String checkAuthorizationCode(TokenRequest tokenRequest)
+      throws Exception
+  {
+    if(tokenRequest == null) return null;
+    
+    String code = tokenRequest.getCode();
+    
+    if(code == null || code.length() == 0) {
+      return null;
+    }
+    
+    return UUID.randomUUID().toString();
+  }
+  
+  protected
+  String refreshToken(TokenRequest tokenRequest)
+      throws Exception
+  {
+    if(tokenRequest == null) return null;
+    
+    String refreshToken = tokenRequest.getRefreshToken();
+    
+    if(refreshToken == null || refreshToken.length() == 0) {
+      return null;
+    }
+    
+    return UUID.randomUUID().toString();
   }
   
   protected
@@ -173,7 +230,7 @@ class MockOAuth2 implements IOAuth2
       return false;
     }
     
-    if(clientId.equals(clientSecret)) {
+    if(clientSecret.equals("secr5678")) {
       return true;
     }
     
