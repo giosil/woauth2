@@ -155,7 +155,7 @@ class MockOAuth2 implements IOAuth2
       return null;
     }
     
-    if(username.equals(password)) {
+    if(password.equals("pass1234")) {
       return UUID.randomUUID().toString();
     }
     

@@ -38,7 +38,7 @@ Location: http://localhost:8080/woauth2/cb?error=access_denied&state=xyz
 POST /woauth2/token HTTP/1.1
 Content-type: application/x-www-form-urlencoded
 
-grant_type=password&username=admin&password=admin&client_id=test
+grant_type=password&username=admin&password=pass1234&client_id=test
 ```
 
 **Response:**

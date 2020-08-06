@@ -6,17 +6,6 @@
 	<body>
 		<h1>WOauth2</h1>
 		<br />
-		<h2>Request Token:</h2>
-		<br />
-		<form name="reqtok" action="token" method="post">
-			UserName: <input type="text" name="username" value="admin"> Password: <input type="password" name="password" value="admin"><br />
-			<input type="hidden" name="grant_type" value="password">
-			<input type="hidden" name="client_id" value="test">
-			<br/>
-			<button type="submit">Request Token</button>
-		</form>
-		<br />
-		<hr />
 		<h2>Request Authorization:</h2>
 		<br />
 		<form name="reqaut" action="authorize" method="get">
@@ -28,7 +17,19 @@
 		</form>
 		<br />
 		<hr />
-		<a href="https://tools.ietf.org/html/rfc6749">The OAuth 2.0 Authorization Framework</a>
+		<br />
+		<h2>Access Token Request:</h2>
+		<br />
+		<form name="reqtok" action="token" method="post">
+			UserName: <input type="text" name="username" value="admin"> Password: <input type="password" name="password" value="pass1234"><br />
+			<input type="hidden" name="grant_type" value="password">
+			<input type="hidden" name="client_id" value="test">
+			<br/>
+			<button type="submit">Request Token</button>
+		</form>
+		<br />
+		<hr />
+		<a href="https://tools.ietf.org/html/rfc6749" target="_blank">The OAuth 2.0 Authorization Framework</a>
 		<script>
 			window.onload = function() {
 				document.forms['reqaut'].elements["redirect_uri"].value = location.href + 'cb';
