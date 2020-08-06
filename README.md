@@ -57,7 +57,7 @@ grant_type=password&username=admin&password=pass1234&client_id=test
 HTTP/1.1 401 Unauthorized
 Content-Type: application/json;charset=UTF-8
 
-{"error":"access_denied", "error_description":"Access denied"}
+{"error":"access_denied", "error_description":"Access denied."}
 ```
 
 ## Get user info (Standard Claims OpenId)
