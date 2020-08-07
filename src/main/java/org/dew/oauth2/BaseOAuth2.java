@@ -202,8 +202,8 @@ class BaseOAuth2 implements IOAuth2
   {
     if(tokenRequest == null) return null;
     
-    String username     = tokenRequest.getUsername();
-    String password     = tokenRequest.getPassword();
+    String username = tokenRequest.getUsername();
+    String password = tokenRequest.getPassword();
     
     if(username == null || username.length() == 0) {
       return null;
