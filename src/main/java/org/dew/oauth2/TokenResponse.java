@@ -11,7 +11,7 @@ import java.util.Map;
 public 
 class TokenResponse implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -7236538781537416017L;
+  private static final long serialVersionUID = 3660257374690580840L;
   
   private String accessToken;   // REQUIRED
   private String tokenType;     // REQUIRED
@@ -19,6 +19,8 @@ class TokenResponse implements IOAuthObject, Serializable
   private String refreshToken;  // OPTIONAL
   private String scope;         // OPTIONAL
   private String state;         // REQUIRED if present in the client authorization request.
+  // Extension
+  private Map<String,Object> parameters; // OPTIONAL
   
   public TokenResponse()
   {
@@ -111,10 +113,50 @@ class TokenResponse implements IOAuthObject, Serializable
     this.state = state;
   }
   
+  public Map<String, Object> getParameters() {
+    return parameters;
+  }
+
+  public void setParameters(Map<String, Object> parameters) {
+    this.parameters = parameters;
+  }
+  
+  // Parameters utilities
+  
+  public void put(String key, Object val) {
+    if(key == null) return;
+    if(parameters == null) parameters = new LinkedHashMap<String, Object>();
+    parameters.put(key, val);
+  }
+  
+  public void remove(String key) {
+    if(key == null) return;
+    if(parameters == null) return;
+    parameters.remove(key);
+  }
+  
+  public void clearParameters() {
+    if(parameters == null) return;
+    parameters.clear();
+  }
+  
+  public int countParameters() {
+    if(parameters == null) return 0;
+    return parameters.size();
+  }
+  
+  public boolean hasParameters() {
+    if(parameters == null) return false;
+    return parameters.size() > 0;
+  }
+  
   // IOAuthObject
-    
+  
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
+    if(parameters != null && !parameters.isEmpty()) {
+      mapResult.putAll(parameters);
+    }
     mapResult.put("access_token",  accessToken);
     mapResult.put("token_type",    tokenType);
     mapResult.put("expires_in",    expiresIn);
