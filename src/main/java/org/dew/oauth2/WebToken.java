@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 public 
 class WebToken extends HttpServlet 
 {
-  private static final long serialVersionUID = 5695637401281411445L;
+  private static final long serialVersionUID = 1950285650440724435L;
   
   protected IOAuth2 oauth2;
   
@@ -118,7 +118,7 @@ class WebToken extends HttpServlet
   {
     if(tokenResponse == null) return;
     
-    String content = tokenResponse.toJson();
+    String content = tokenResponse.toJSON();
     
     response.setContentType("application/json;charset=UTF-8");
     response.setContentLength(content.length());
@@ -131,7 +131,7 @@ class WebToken extends HttpServlet
   {
     if(error == null) error = OAuthError.SERVER_ERROR;
     
-    String content = error.toJson();
+    String content = error.toJSON();
     
     response.setStatus(error.getHttpStatus());
     response.setContentType("application/json;charset=UTF-8");

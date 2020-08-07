@@ -2,7 +2,7 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
  * Bean TokenRequest.
  */
 public 
-class TokenRequest implements Serializable
+class TokenRequest implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -661009814854940618L;
+  private static final long serialVersionUID = -2059996650185044534L;
   
   private String grantType; // authorization_code, password, client_credentials, refresh_token
   private String username;
@@ -159,25 +159,11 @@ class TokenRequest implements Serializable
   public void setRedirectURI(String redirectURI) {
     this.redirectURI = redirectURI;
   }
-
-  public String toQueryString() {
-    StringBuilder sb = new StringBuilder();
-    Utils.appendParam(sb, "grant_type",    grantType);
-    Utils.appendParam(sb, "username",      username);
-    Utils.appendParam(sb, "password",      password);
-    Utils.appendParam(sb, "client_id",     clientId);
-    Utils.appendParam(sb, "client_secret", clientSecret);
-    Utils.appendParam(sb, "scope",         scope);
-    Utils.appendParam(sb, "refresh_token", refreshToken);
-    Utils.appendParam(sb, "tenant",        tenant);
-    Utils.appendParam(sb, "code",          code);
-    Utils.appendParam(sb, "code_verifier", codeVerifier);
-    Utils.appendParam(sb, "redirect_uri",  redirectURI);
-    return sb.toString();
-  }
+  
+  // IOAuthObject
   
   public Map<String, Object> toMap() {
-    Map<String, Object> mapResult = new HashMap<String, Object>();
+    Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     mapResult.put("grant_type",    grantType);
     mapResult.put("username",      username);
     mapResult.put("password",      password);
@@ -191,6 +177,23 @@ class TokenRequest implements Serializable
     mapResult.put("redirect_uri",  redirectURI);
     return mapResult;
   }
+  
+  @Override
+  public String toQueryString() {
+    return Utils.toQueryString(toMap());
+  }
+  
+  @Override
+  public String toJSON() {
+    return Utils.toJSON(toMap());
+  }
+  
+  @Override
+  public String toHeaderValue() {
+    return Utils.toHeaderValue(toMap());
+  }
+  
+  // Object
   
   @Override
   public boolean equals(Object object) {

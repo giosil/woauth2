@@ -2,16 +2,16 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Bean TokenResponse.
  */
 public 
-class TokenResponse implements Serializable
+class TokenResponse implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = 1189179673497581828L;
+  private static final long serialVersionUID = -7236538781537416017L;
   
   private String accessToken;   // REQUIRED
   private String tokenType;     // REQUIRED
@@ -110,29 +110,11 @@ class TokenResponse implements Serializable
   public void setState(String state) {
     this.state = state;
   }
-
-  public String toJson() {
-    if(accessToken == null) accessToken = "";
-    if(tokenType   == null) tokenType   = "bearer";
-    String result = "{";
-    result += "\"access_token\":\"" + accessToken.replace('"', '\'') + "\"";
-    result += ",\"token_type\":\"" + tokenType.replace('"', '\'') + "\"";
-    result += ",\"expires_in\":" + expiresIn;
-    if(refreshToken != null && refreshToken.length() > 0) {
-      result += ",\"refresh_token\":\"" + refreshToken.replace('"', '\'') + "\"";
-    }
-    if(scope != null && scope.length() > 0) {
-      result += ",\"scope\":\"" + scope.replace('"', '\'') + "\"";
-    }
-    if(state != null && state.length() > 0) {
-      result += ",\"state\":\"" + state.replace('"', '\'') + "\"";
-    }
-    result += "}";
-    return result;
-  }
   
+  // IOAuthObject
+    
   public Map<String, Object> toMap() {
-    Map<String, Object> mapResult = new HashMap<String, Object>();
+    Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     mapResult.put("access_token",  accessToken);
     mapResult.put("token_type",    tokenType);
     mapResult.put("expires_in",    expiresIn);
@@ -141,6 +123,23 @@ class TokenResponse implements Serializable
     mapResult.put("state",         state);
     return mapResult;
   }
+  
+  @Override
+  public String toQueryString() {
+    return Utils.toQueryString(toMap());
+  }
+  
+  @Override
+  public String toJSON() {
+    return Utils.toJSON(toMap());
+  }
+  
+  @Override
+  public String toHeaderValue() {
+    return Utils.toHeaderValue(toMap());
+  }
+  
+  // Object
   
   @Override
   public boolean equals(Object object) {

@@ -69,7 +69,7 @@ class WebUserInfo extends HttpServlet
     }
     
     if(token == null || token.length() < 4) {
-      response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\" error_description=\"Invalid token.\"");
+      response.addHeader("WWW-Authenticate", "Bearer " + OAuthError.INVALID_TOKEN.toHeaderValue());
       response.sendError(403); // Forbidden
       return;
     }
@@ -86,7 +86,7 @@ class WebUserInfo extends HttpServlet
     }
     
     if(userInfo == null) {
-      response.addHeader("WWW-Authenticate", OAuthError.INVALID_TOKEN.toHeaderValue());
+      response.addHeader("WWW-Authenticate", "Bearer " + OAuthError.INVALID_TOKEN.toHeaderValue());
       response.sendError(403); // Forbidden
       return;
     }
@@ -108,7 +108,7 @@ class WebUserInfo extends HttpServlet
   {
     if(userInfo == null) return;
     
-    String content = userInfo.toJson();
+    String content = userInfo.toJSON();
     
     response.setContentType("application/json;charset=UTF-8");
     response.setContentLength(content.length());

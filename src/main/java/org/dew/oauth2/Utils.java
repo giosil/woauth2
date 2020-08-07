@@ -1,5 +1,6 @@
 package org.dew.oauth2;
 
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -33,6 +34,320 @@ class Utils
     else {
       sb.append("&" + parameterName + "=" + encode(value));
     }
+  }
+  
+  public static
+  String toQueryString(Map<String, Object> map)
+  {
+    if(map == null) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder(map.size() * 2 * 8);
+    Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
+    while(iterator.hasNext()) {
+      Map.Entry<String, Object> entry = iterator.next();
+      String key = entry.getKey();
+      Object val = entry.getValue();
+      appendParam(sb, key, val);
+    }
+    return sb.toString();
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static
+  String toHeaderValue(Map<String, Object> map)
+  {
+    if(map == null) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder(map.size() * 2 * 8);
+    Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
+    while(iterator.hasNext()) {
+      Map.Entry<String, Object> entry = iterator.next();
+      String key = entry.getKey();
+      Object val = entry.getValue();
+      if(val == null) {
+        continue;
+      }
+      else if(val instanceof String) {
+        sb.append(" " + key + "=" + toJSON((String)val));
+      }
+      else if(val instanceof Number) {
+        sb.append(" " + key + "=" + val);
+      }
+      else if(val instanceof Boolean) {
+        sb.append(" " + key + "=" + val);
+      }
+      else if(val instanceof Date) {
+        sb.append(" " + key + "=\"" + formatDate((Date) val) + "\"");
+      }
+      else if(val instanceof Calendar) {
+        sb.append(" " + key + "=\"" + formatDate((Calendar) val) + "\"");
+      }
+      else if(val instanceof Map) {
+        sb.append(" " + key + "=" + toJSON((Map<String, Object>) val));
+      }
+      else if(val instanceof Collection) {
+        sb.append(" " + key + "=" + toJSON((Collection<?>) val));
+      }
+      else if(val.getClass().isArray()) {
+        sb.append(" " + key + "=" + toJSONArray(val));
+      }
+      else if(val instanceof IOAuthObject) {
+        sb.append(" " + key + "=" + ((IOAuthObject)val).toJSON());
+      }
+      else {
+        sb.append(" " + key + "=" + toJSON(val.toString()));
+      }
+    }
+    if(sb.length() == 0) return "";
+    return sb.substring(1);
+  }
+  
+  /**
+   * Library independent JSON object serialization implementation. 
+   * 
+   * @param map Map<String, Object>
+   * @return JSON representation
+   */
+  @SuppressWarnings("unchecked")
+  public static
+  String toJSON(Map<String, Object> map)
+  {
+    if(map == null) {
+      return "null";
+    }
+    StringBuilder sb = new StringBuilder(map.size() * 2 * 8);
+    Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
+    while(iterator.hasNext()) {
+      Map.Entry<String, Object> entry = iterator.next();
+      String key = entry.getKey();
+      Object val = entry.getValue();
+      if(val == null) {
+        continue;
+      }
+      else if(val instanceof String) {
+        sb.append(",\"" + key + "\":" + toJSON((String)val));
+      }
+      else if(val instanceof Number) {
+        sb.append(",\"" + key + "\":" + val);
+      }
+      else if(val instanceof Boolean) {
+        sb.append(",\"" + key + "\":" + val);
+      }
+      else if(val instanceof Date) {
+        sb.append(",\"" + key + "\":\"" + formatDate((Date) val) + "\"");
+      }
+      else if(val instanceof Calendar) {
+        sb.append(",\"" + key + "\":\"" + formatDate((Calendar) val) + "\"");
+      }
+      else if(val instanceof Map) {
+        sb.append(",\"" + key + "\":" + toJSON((Map<String, Object>) val));
+      }
+      else if(val instanceof Collection) {
+        sb.append(",\"" + key + "\":" + toJSON((Collection<?>) val));
+      }
+      else if(val.getClass().isArray()) {
+        sb.append(",\"" + key + "\":" + toJSONArray(val));
+      }
+      else if(val instanceof IOAuthObject) {
+        sb.append(",\"" + key + "\":" + ((IOAuthObject)val).toJSON());
+      }
+      else {
+        sb.append(",\"" + key + "\":" + toJSON(val.toString()));
+      }
+    }
+    if(sb.length() == 0) return "{}";
+    return "{" + sb.substring(1) + "}";
+  }
+  
+  /**
+   * Library independent JSON array serialization implementation. 
+   * 
+   * @param col Collection<?>
+   * @return JSON representation
+   */
+  @SuppressWarnings("unchecked")
+  public static
+  String toJSON(Collection<?> col)
+  {
+    if(col == null) {
+      return "null";
+    }
+    if(col.size() == 0) {
+      return "[]";
+    }
+    StringBuilder sb = new StringBuilder(col.size() * 8);
+    Iterator<?> iterator = col.iterator();
+    while(iterator.hasNext()) {
+      Object val = iterator.next();
+      if(val == null) {
+        sb.append(",null");
+      }
+      else if(val instanceof String) {
+        sb.append("," + toJSON((String) val));
+      }
+      else if(val instanceof Number) {
+        sb.append("," + val);
+      }
+      else if(val instanceof Boolean) {
+        sb.append("," + val);
+      }
+      else if(val instanceof Date) {
+        sb.append(",\"" + formatDate((Date) val) + "\"");
+      }
+      else if(val instanceof Calendar) {
+        sb.append(",\"" + formatDate((Calendar) val) + "\"");
+      }
+      else if(val instanceof Map) {
+        sb.append("," + toJSON((Map<String, Object>) val));
+      }
+      else if(val instanceof Collection) {
+        sb.append("," + toJSON((Collection<?>) val));
+      }
+      else if(val.getClass().isArray()) {
+        sb.append("," + toJSONArray(val));
+      }
+      else if(val instanceof IOAuthObject) {
+        sb.append("," + ((IOAuthObject)val).toJSON());
+      }
+      else {
+        sb.append("," + toJSON(val.toString()));
+      }
+    }
+    if(sb.length() == 0) return "[]";
+    return "[" + sb.substring(1) + "]";
+  }
+  
+  /**
+   * Library independent JSON array serialization implementation. 
+   * 
+   * @param object Object
+   * @return JSON representation
+   */
+  @SuppressWarnings("unchecked")
+  public static
+  String toJSONArray(Object object)
+  {
+    if(object == null) {
+      return "null";
+    }
+    if(object instanceof Collection) {
+      return toJSON((Collection<?>) object);
+    }
+    if(!object.getClass().isArray()) {
+      ArrayList<Object> arrayList = new ArrayList<Object>(1);
+      arrayList.add(object);
+      return toJSON((Collection<?>) object);
+    }
+    int length = Array.getLength(object);
+    StringBuilder sb = new StringBuilder(length * 8);
+    for(int i = 0; i < length; i++) {
+      Object val = Array.get(object, i);
+      if(val == null) {
+        sb.append(",null");
+      }
+      else if(val instanceof String) {
+        sb.append("," + toJSON((String) val));
+      }
+      else if(val instanceof Number) {
+        sb.append("," + val);
+      }
+      else if(val instanceof Boolean) {
+        sb.append("," + val);
+      }
+      else if(val instanceof Date) {
+        sb.append(",\"" + formatDate((Date) val) + "\"");
+      }
+      else if(val instanceof Calendar) {
+        sb.append(",\"" + formatDate((Calendar) val) + "\"");
+      }
+      else if(val instanceof Map) {
+        sb.append("," + toJSON((Map<String, Object>) val));
+      }
+      else if(val instanceof Collection) {
+        sb.append("," + toJSON((Collection<?>) val));
+      }
+      else if(val.getClass().isArray()) {
+        sb.append("," + toJSONArray(val));
+      }
+      else if(val instanceof IOAuthObject) {
+        sb.append("," + ((IOAuthObject)val).toJSON());
+      }
+      else {
+        sb.append("," + toJSON(val.toString()));
+      }
+    }
+    if(sb.length() == 0) return "[]";
+    return "[" + sb.substring(1) + "]";
+  }
+  
+  /**
+   * Library independent JSON string serialization implementation. 
+   * 
+   * @param string String
+   * @return JSON representation
+   */
+  public static 
+  String toJSON(String string) 
+  {
+    if(string == null) {
+      return "null";
+    }
+    if(string.length() == 0) {
+      return "\"\"";
+    }
+    char b;
+    char c = 0;
+    String hhhh;
+    int i;
+    int len = string.length();
+    StringBuilder sb = new StringBuilder(len + 2);
+    sb.append('"');
+    for(i = 0; i < len; i += 1) {
+      b = c;
+      c = string.charAt(i);
+      switch(c) {
+        case '\\':
+        case '"':
+          sb.append('\\');
+          sb.append(c);
+        break;
+        case '/':
+          if(b == '<') {
+            sb.append('\\');
+          }
+          sb.append(c);
+        break;
+        case '\b':
+          sb.append("\\b");
+        break;
+        case '\t':
+          sb.append("\\t");
+        break;
+        case '\n':
+          sb.append("\\n");
+        break;
+        case '\f':
+          sb.append("\\f");
+        break;
+        case '\r':
+          sb.append("\\r");
+        break;
+        default:
+          if(c < ' ' ||(c >= '\u0080' && c < '\u00a0') ||(c >= '\u2000' && c < '\u2100')) {
+            sb.append("\\u");
+            hhhh = Integer.toHexString(c);
+            sb.append("0000", 0, 4 - hhhh.length());
+            sb.append(hhhh);
+          } 
+          else {
+            sb.append(c);
+          }
+      }
+    }
+    sb.append('"');
+    return sb.toString();
   }
   
   public static

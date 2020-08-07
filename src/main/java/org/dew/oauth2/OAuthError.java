@@ -2,7 +2,7 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
  * Bean error.
  */
 public 
-class OAuthError implements Serializable
+class OAuthError implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -3320659035189342994L;
+  private static final long serialVersionUID = -8487635322414069718L;
   
   private int    httpStatus;
   private String error;
@@ -126,60 +126,34 @@ class OAuthError implements Serializable
   public void setState(String state) {
     this.state = state;
   }
-
-  public String toJson() {
-    if(error == null) error = "";
-    
-    String result = "{";
-    result += "\"error\":\"" + error.replace('"', '\'') + "\"";
-    if(errorDescription != null && errorDescription.length() > 0) {
-      result += ",\"error_description\":\"" + errorDescription.replace('"', '\'') + "\"";
-    }
-    if(errorURI != null && errorURI.length() > 0) {
-      result += ",\"error_uri\":\"" + errorURI.replace('"', '\'') + "\"";
-    }
-    if(state != null && state.length() > 0) {
-      result += ",\"state\":\"" + state.replace('"', '\'') + "\"";
-    }
-    result += "}";
-    return result;
-  }
   
-  public String toHeaderValue() {
-    if(error == null) error = "";
-    
-    String result = "Bearer error=\"" + error.replace('"', '\'') + "\"";
-    if(errorDescription != null && errorDescription .length() > 0) {
-      result += " error_description=\"" + errorDescription.replace('"', '\'') + "\"";
-    }
-    if(errorURI != null && errorURI .length() > 0) {
-      result += " error_uri=\"" + errorURI.replace('"', '\'') + "\"";
-    }
-    if(state != null && state .length() > 0) {
-      result += " state=\"" + state.replace('"', '\'') + "\"";
-    }
-    return result;
-  }
-  
-  public String toQueryString() {
-    if(error == null) error = "";
-    
-    StringBuilder sb = new StringBuilder();
-    Utils.appendParam(sb, "error",             error);
-    Utils.appendParam(sb, "error_description", errorDescription);
-    Utils.appendParam(sb, "error_uri",         errorURI);
-    Utils.appendParam(sb, "state",             state);
-    return sb.toString();
-  }
+  // IOAuthObject
   
   public Map<String, Object> toMap() {
-    Map<String, Object> mapResult = new HashMap<String, Object>();
+    Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     mapResult.put("error",             error);
     mapResult.put("error_description", errorDescription);
     mapResult.put("error_uri",         errorURI);
     mapResult.put("state",             state);
     return mapResult;
   }
+  
+  @Override
+  public String toQueryString() {
+    return Utils.toQueryString(toMap());
+  }
+  
+  @Override
+  public String toJSON() {
+    return Utils.toJSON(toMap());
+  }
+  
+  @Override
+  public String toHeaderValue() {
+    return Utils.toHeaderValue(toMap());
+  }
+  
+  // Object
   
   @Override
   public boolean equals(Object object) {

@@ -2,13 +2,16 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Bean UserInfo based on standard claims OpenId.
  */
 public 
-class UserInfo implements Serializable
+class UserInfo implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = 2215603393991908598L;
+  private static final long serialVersionUID = -1596569952840988698L;
   // Standard Claims OpenId
   private String sub;
   private String name;
@@ -265,84 +268,75 @@ class UserInfo implements Serializable
     this.updatedAt = updatedAt;
   }
   
-  public String toJson() {
-    if(sub == null) sub = "";
-    
-    String result = "{";
-    result += "\"sub\":\"" + sub.replace('"', '\'') + "\"";
-    if(name != null && name.length() > 0) {
-      result += ",\"name\":\"" + name.replace('"', '\'') + "\"";
-    }
-    if(givenName != null && givenName.length() > 0) {
-      result += ",\"given_name\":\"" + givenName.replace('"', '\'') + "\"";
-    }
-    if(familyName != null && familyName.length() > 0) {
-      result += ",\"family_name\":\"" + familyName.replace('"', '\'') + "\"";
-    }
-    if(middleName != null && middleName.length() > 0) {
-      result += ",\"middle_name\":\"" + middleName.replace('"', '\'') + "\"";
-    }
-    if(nickname != null && nickname.length() > 0) {
-      result += ",\"nickname\":\"" + nickname.replace('"', '\'') + "\"";
-    }
-    if(preferredUsername != null && preferredUsername.length() > 0) {
-      result += ",\"preferred_username\":\"" + preferredUsername.replace('"', '\'') + "\"";
-    }
-    if(profile != null && profile.length() > 0) {
-      result += ",\"profile\":\"" + profile.replace('"', '\'') + "\"";
-    }
-    if(picture != null && picture.length() > 0) {
-      result += ",\"picture\":\"" + picture.replace('"', '\'') + "\"";
-    }
-    if(website != null && website.length() > 0) {
-      result += ",\"website\":\"" + website.replace('"', '\'') + "\"";
-    }
-    if(email != null && email.length() > 0) {
-      result += ",\"email\":\"" + email.replace('"', '\'') + "\"";
-      result += ",\"email_verified\":" + emailVerified;
-    }
-    if(gender != null && gender.length() > 0) {
-      result += ",\"gender\":\"" + gender.replace('"', '\'') + "\"";
-    }
-    if(birthdate != null && birthdate.length() > 0) {
-      result += ",\"birthdate\":\"" + birthdate.replace('"', '\'') + "\"";
-    }
-    if(zoneinfo != null && zoneinfo.length() > 0) {
-      result += ",\"zoneinfo\":\"" + zoneinfo.replace('"', '\'') + "\"";
-    }
-    if(locale != null && locale.length() > 0) {
-      result += ",\"locale\":\"" + locale.replace('"', '\'') + "\"";
-    }
-    if(phoneNumber != null && phoneNumber.length() > 0) {
-      result += ",\"phone_number\":\"" + phoneNumber.replace('"', '\'') + "\"";
-      result += ",\"phone_number_verified\":" + phoneNumberVerified;
-    }
-    if(addressFormatted != null && addressFormatted.length() > 0) {
-      result += ",\"address\":{";
-      result += "\"formatted\":\"" + addressFormatted.replace('"', '\'') + "\"";
-      if(addressStreet != null && addressStreet.length() > 0) {
-        result += ",\"street_address\":\"" + addressStreet.replace('"', '\'') + "\"";
-      }
-      if(addressLocality != null && addressLocality.length() > 0) {
-        result += ",\"locality\":\"" + addressLocality.replace('"', '\'') + "\"";
-      }
-      if(addressRegion != null && addressRegion.length() > 0) {
-        result += ",\"region\":\"" + addressRegion.replace('"', '\'') + "\"";
-      }
-      if(addressPostalCode != null && addressPostalCode.length() > 0) {
-        result += ",\"postal_code\":\"" + addressPostalCode.replace('"', '\'') + "\"";
-      }
-      if(addressCountry != null && addressCountry.length() > 0) {
-        result += ",\"country\":\"" + addressCountry.replace('"', '\'') + "\"";
-      }
-      result += "}";
-    }
-    if(updatedAt > 0) {
-      result += ",\"updated_at\":" + updatedAt;
-    }
-    result += "}";
-    return result;
+  // Utilities
+  public boolean hasAddress()
+  {
+    if(addressFormatted  != null && addressFormatted.length()  > 0) return true;
+    if(addressStreet     != null && addressStreet.length()     > 0) return true;
+    if(addressLocality   != null && addressLocality.length()   > 0) return true;
+    if(addressRegion     != null && addressRegion.length()     > 0) return true;
+    if(addressPostalCode != null && addressPostalCode.length() > 0) return true;
+    if(addressCountry    != null && addressCountry.length()    > 0) return true;
+    return false;
   }
+  
+  // IOAuthObject
+  
+  public Map<String, Object> toMap() {
+    Map<String, Object> mapResult = new LinkedHashMap<String, Object>(18);
+    mapResult.put("sub",                sub);
+    mapResult.put("name",               name);
+    mapResult.put("given_name",         givenName);
+    mapResult.put("family_name",        familyName);
+    mapResult.put("middle_name",        middleName);
+    mapResult.put("nickname",           nickname);
+    mapResult.put("preferred_username", preferredUsername);
+    mapResult.put("profile",            profile);
+    mapResult.put("picture",            picture);
+    mapResult.put("website",            website);
+    if(email != null && email.length() > 0) {
+      mapResult.put("email",            email);
+      mapResult.put("email_verified",   emailVerified);
+    }
+    mapResult.put("gender",             gender);
+    mapResult.put("birthdate",          birthdate);
+    mapResult.put("zoneinfo",           zoneinfo);
+    mapResult.put("locale",             locale);
+    if(phoneNumber != null && phoneNumber.length() > 0) {
+      mapResult.put("phone_number",     phoneNumber);
+      mapResult.put("phone_number_verified", phoneNumberVerified);
+    }
+    if(hasAddress()) {
+      Map<String, Object> mapAddress = new LinkedHashMap<String, Object>();
+      mapAddress.put("formatted",      addressFormatted);
+      mapAddress.put("street_address", addressStreet);
+      mapAddress.put("locality",       addressLocality);
+      mapAddress.put("region",         addressRegion);
+      mapAddress.put("postal_code",    addressPostalCode);
+      mapAddress.put("country",        addressCountry);
+      
+      mapResult.put("address", mapAddress);
+    }
+    mapResult.put("updated_at", updatedAt);
+    return mapResult;
+  }
+  
+  @Override
+  public String toQueryString() {
+    return Utils.toQueryString(toMap());
+  }
+  
+  @Override
+  public String toJSON() {
+    return Utils.toJSON(toMap());
+  }
+  
+  @Override
+  public String toHeaderValue() {
+    return Utils.toHeaderValue(toMap());
+  }
+  
+  // Object
   
   @Override
   public boolean equals(Object object) {
@@ -362,6 +356,6 @@ class UserInfo implements Serializable
   
   @Override
   public String toString() {
-    return "UserInfo(" + sub + ")";
+    return "UserInfo(" + sub + "," + name + ")";
   }
 }

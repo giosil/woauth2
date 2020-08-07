@@ -2,15 +2,15 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 public 
-class AuthorizationResponse implements Serializable
+class AuthorizationResponse implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = 1226914339886200052L;
+  private static final long serialVersionUID = -5352209232102547902L;
   
   private String code;
   private String state;
@@ -58,19 +58,32 @@ class AuthorizationResponse implements Serializable
     this.state = state;
   }
   
-  public String toQueryString() {
-    StringBuilder sb = new StringBuilder();
-    Utils.appendParam(sb, "code",  code);
-    Utils.appendParam(sb, "state", state);
-    return sb.toString();
-  }
+  // IOAuthObject
   
+  @Override
   public Map<String, Object> toMap() {
-    Map<String, Object> mapResult = new HashMap<String, Object>();
+    Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     mapResult.put("code",  code);
     mapResult.put("state", state);
     return mapResult;
   }
+  
+  @Override
+  public String toQueryString() {
+    return Utils.toQueryString(toMap());
+  }
+  
+  @Override
+  public String toJSON() {
+    return Utils.toJSON(toMap());
+  }
+  
+  @Override
+  public String toHeaderValue() {
+    return Utils.toHeaderValue(toMap());
+  }
+  
+  // Object
   
   @Override
   public boolean equals(Object object) {
