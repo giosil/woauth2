@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 public 
 class OAuthError implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -8487635322414069718L;
+  private static final long serialVersionUID = 8368264550128374309L;
   
   private int    httpStatus;
   private String error;
@@ -79,11 +79,7 @@ class OAuthError implements IOAuthObject, Serializable
   
   public OAuthError(Map<String, Object> map)
   {
-    this.httpStatus       = Utils.toInt(map.get("http_status"));;
-    this.error            = Utils.toString(map.get("error"));
-    this.errorDescription = Utils.toString(map.get("error_description"));
-    this.errorURI         = Utils.toString(map.get("error_uri"));
-    this.state            = Utils.toString(map.get("state"));
+    fromMap(map);
   }
 
   public String getError() {
@@ -128,6 +124,17 @@ class OAuthError implements IOAuthObject, Serializable
   }
   
   // IOAuthObject
+  
+  @Override
+  public void fromMap(Map<String, Object> map) {
+    if(map == null) return;
+    
+    this.httpStatus       = Utils.toInt(map.get("http_status"));
+    this.error            = Utils.toString(map.get("error"));
+    this.errorDescription = Utils.toString(map.get("error_description"));
+    this.errorURI         = Utils.toString(map.get("error_uri"));
+    this.state            = Utils.toString(map.get("state"));
+  }
   
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();

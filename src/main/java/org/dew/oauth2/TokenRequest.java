@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 public 
 class TokenRequest implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -2059996650185044534L;
+  private static final long serialVersionUID = -395471861466837927L;
   
   private String grantType; // authorization_code, password, client_credentials, refresh_token
   private String username;
@@ -58,18 +58,7 @@ class TokenRequest implements IOAuthObject, Serializable
   
   public TokenRequest(Map<String, Object> map)
   {
-    this.grantType    = Utils.toString(map.get("grant_type"));
-    this.username     = Utils.toString(map.get("username"));
-    this.password     = Utils.toString(map.get("password"));
-    this.clientId     = Utils.toString(map.get("client_id"));
-    this.clientSecret = Utils.toString(map.get("client_secret"));
-    this.scope        = Utils.toString(map.get("scope"));
-    
-    this.refreshToken = Utils.toString(map.get("refresh_token"));
-    this.tenant       = Utils.toString(map.get("tenant"));
-    this.code         = Utils.toString(map.get("code"));
-    this.codeVerifier = Utils.toString(map.get("code_verifier"));
-    this.redirectURI  = Utils.toString(map.get("redirect_uri"));
+    fromMap(map);
   }
   
   public String getGrantType() {
@@ -161,6 +150,24 @@ class TokenRequest implements IOAuthObject, Serializable
   }
   
   // IOAuthObject
+  
+  @Override
+  public void fromMap(Map<String, Object> map) {
+    if(map == null) return;
+    
+    this.grantType    = Utils.toString(map.get("grant_type"));
+    this.username     = Utils.toString(map.get("username"));
+    this.password     = Utils.toString(map.get("password"));
+    this.clientId     = Utils.toString(map.get("client_id"));
+    this.clientSecret = Utils.toString(map.get("client_secret"));
+    this.scope        = Utils.toString(map.get("scope"));
+    
+    this.refreshToken = Utils.toString(map.get("refresh_token"));
+    this.tenant       = Utils.toString(map.get("tenant"));
+    this.code         = Utils.toString(map.get("code"));
+    this.codeVerifier = Utils.toString(map.get("code_verifier"));
+    this.redirectURI  = Utils.toString(map.get("redirect_uri"));
+  }
   
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();

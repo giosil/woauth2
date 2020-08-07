@@ -441,6 +441,27 @@ class Utils
   }
   
   public static
+  boolean toBoolean(Object value)
+  {
+    if(value == null) {
+      return false;
+    }
+    if(value instanceof Boolean) {
+      return ((Boolean) value).booleanValue();
+    }
+    if(value instanceof String) {
+      String s = (String) value;
+      if(s.length() == 0) return false;
+      return ("1TtYySs").indexOf(s.charAt(0)) >= 0;
+    }
+    if(value instanceof Number) {
+      int i = ((Number) value).intValue();
+      return i != 0;
+    }
+    return false;
+  }
+  
+  public static
   String formatDate(Calendar cal)
   {
     if(cal == null) return "";

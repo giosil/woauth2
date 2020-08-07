@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 public 
 class AuthorizationRequest implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = 3158723882550276251L;
+  private static final long serialVersionUID = -7301587844052799362L;
   
   private String responseType;  // REQUIRED
   private String clientId;      // REQUIRED
@@ -18,6 +18,9 @@ class AuthorizationRequest implements IOAuthObject, Serializable
   private String scope;         // OPTIONAL
   private String state;         // RECOMMENDED
   private String redirectURI;   // REQUIRED
+  private String nonce;         // OPTIONAL
+  private String login_hint;    // OPTIONAL (example: user name, email)
+  private String hd;            // OPTIONAL (hosted domain)
   
   public AuthorizationRequest()
   {
@@ -40,6 +43,9 @@ class AuthorizationRequest implements IOAuthObject, Serializable
     this.scope        = request.getParameter("scope");
     this.state        = request.getParameter("state");
     this.redirectURI  = request.getParameter("redirect_uri");
+    this.nonce        = request.getParameter("nonce");
+    this.login_hint   = request.getParameter("login_hint");
+    this.hd           = request.getParameter("hd");
     
     if(responseType == null || responseType.length() == 0) {
       responseType = "code";
@@ -48,16 +54,7 @@ class AuthorizationRequest implements IOAuthObject, Serializable
   
   public AuthorizationRequest(Map<String, Object> map)
   {
-    this.responseType = Utils.toString(map.get("response_type"));
-    this.clientId     = Utils.toString(map.get("client_id"));
-    this.clientSecret = Utils.toString(map.get("client_secret"));
-    this.scope        = Utils.toString(map.get("scope"));
-    this.state        = Utils.toString(map.get("state"));
-    this.redirectURI  = Utils.toString(map.get("redirect_uri"));
-    
-    if(responseType == null || responseType.length() == 0) {
-      responseType = "code";
-    }
+    fromMap(map);
   }
   
   public String getResponseType() {
@@ -109,7 +106,50 @@ class AuthorizationRequest implements IOAuthObject, Serializable
     this.redirectURI = redirectURI;
   }
   
+  public String getNonce() {
+    return nonce;
+  }
+
+  public void setNonce(String nonce) {
+    this.nonce = nonce;
+  }
+
+  public String getLogin_hint() {
+    return login_hint;
+  }
+
+  public void setLogin_hint(String login_hint) {
+    this.login_hint = login_hint;
+  }
+
+  public String getHd() {
+    return hd;
+  }
+
+  public void setHd(String hd) {
+    this.hd = hd;
+  }
+  
   // IOAuthObject
+  
+  @Override
+  public void fromMap(Map<String, Object> map) {
+    if(map == null) return;
+    
+    this.responseType = Utils.toString(map.get("response_type"));
+    this.clientId     = Utils.toString(map.get("client_id"));
+    this.clientSecret = Utils.toString(map.get("client_secret"));
+    this.scope        = Utils.toString(map.get("scope"));
+    this.state        = Utils.toString(map.get("state"));
+    this.redirectURI  = Utils.toString(map.get("redirect_uri"));
+    this.nonce        = Utils.toString(map.get("nonce"));
+    this.login_hint   = Utils.toString(map.get("login_hint"));
+    this.hd           = Utils.toString(map.get("hd"));
+    
+    if(responseType == null || responseType.length() == 0) {
+      responseType = "code";
+    }
+  }
   
   @Override
   public Map<String, Object> toMap() {
@@ -123,6 +163,9 @@ class AuthorizationRequest implements IOAuthObject, Serializable
     mapResult.put("scope",         scope);
     mapResult.put("state",         state);
     mapResult.put("redirect_uri",  redirectURI);
+    mapResult.put("nonce",         nonce);
+    mapResult.put("login_hint",    login_hint);
+    mapResult.put("hd",            hd);
     return mapResult;
   }
   

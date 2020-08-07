@@ -2,6 +2,7 @@ package org.dew.oauth2;
 
 import java.io.Serializable;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 public 
 class TokenResponse implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = 3660257374690580840L;
+  private static final long serialVersionUID = -6119021029000635079L;
   
   private String accessToken;   // REQUIRED
   private String tokenType;     // REQUIRED
@@ -19,6 +20,7 @@ class TokenResponse implements IOAuthObject, Serializable
   private String refreshToken;  // OPTIONAL
   private String scope;         // OPTIONAL
   private String state;         // REQUIRED if present in the client authorization request.
+  private String idToken;       // OPTIONAL (JSON Web Token)
   // Extension
   private Map<String,Object> parameters; // OPTIONAL
   
@@ -55,14 +57,7 @@ class TokenResponse implements IOAuthObject, Serializable
   
   public TokenResponse(Map<String, Object> map)
   {
-    if(map == null) return;
-    
-    this.accessToken  = Utils.toString(map.get("access_token"));
-    this.tokenType    = Utils.toString(map.get("token_type"));
-    this.expiresIn    = Utils.toInt(map.get("expires_in"));
-    this.refreshToken = Utils.toString(map.get("refresh_token"));
-    this.scope        = Utils.toString(map.get("scope"));
-    this.state        = Utils.toString(map.get("state"));
+    fromMap(map);
   }
   
   public String getAccessToken() {
@@ -152,6 +147,48 @@ class TokenResponse implements IOAuthObject, Serializable
   
   // IOAuthObject
   
+  @SuppressWarnings("unchecked")
+  @Override
+  public void fromMap(Map<String, Object> map) {
+    if(map == null) return;
+    
+    this.accessToken  = Utils.toString(map.get("access_token"));
+    this.tokenType    = Utils.toString(map.get("token_type"));
+    this.expiresIn    = Utils.toInt(map.get("expires_in"));
+    this.refreshToken = Utils.toString(map.get("refresh_token"));
+    this.scope        = Utils.toString(map.get("scope"));
+    this.state        = Utils.toString(map.get("state"));
+    this.idToken      = Utils.toString(map.get("id_token"));
+    
+    Object objParameters = map.get("parameters");
+    if(objParameters instanceof Map) {
+      this.parameters = (Map<String, Object>) objParameters;
+    }
+    
+    // Parameters same level
+    
+    Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
+    while(iterator.hasNext()) {
+      Map.Entry<String, Object> entry = iterator.next();
+      String key = entry.getKey();
+      
+      if(key.equals("access_token"))  continue;
+      if(key.equals("token_type"))    continue;
+      if(key.equals("expires_in"))    continue;
+      if(key.equals("refresh_token")) continue;
+      if(key.equals("scope"))         continue;
+      if(key.equals("state"))         continue;
+      if(key.equals("id_token"))      continue;
+      if(key.equals("parameters"))    continue;
+      
+      Object val = entry.getValue();
+      if(val == null) continue;
+      
+      if(parameters == null) parameters = new LinkedHashMap<String, Object>();
+      parameters.put(key, val);
+    }
+  }
+  
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     if(parameters != null && !parameters.isEmpty()) {
@@ -163,6 +200,7 @@ class TokenResponse implements IOAuthObject, Serializable
     mapResult.put("refresh_token", refreshToken);
     mapResult.put("scope",         scope);
     mapResult.put("state",         state);
+    mapResult.put("id_token",      idToken);
     return mapResult;
   }
   

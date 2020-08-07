@@ -11,7 +11,7 @@ import java.util.Map;
 public 
 class UserInfo implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -1596569952840988698L;
+  private static final long serialVersionUID = -5164762636220345055L;
   // Standard Claims OpenId
   private String sub;
   private String name;
@@ -66,6 +66,11 @@ class UserInfo implements IOAuthObject, Serializable
       }
       this.name += familyName;
     }
+  }
+  
+  public UserInfo(Map<String, Object> map)
+  {
+    fromMap(map);
   }
   
   public String getSub() {
@@ -281,6 +286,43 @@ class UserInfo implements IOAuthObject, Serializable
   }
   
   // IOAuthObject
+  
+  @Override
+  public void fromMap(Map<String, Object> map) {
+    if(map == null) return;
+    
+    this.sub                 = Utils.toString(map.get("sub"));
+    this.name                = Utils.toString(map.get("name"));
+    this.givenName           = Utils.toString(map.get("given_name"));
+    this.familyName          = Utils.toString(map.get("family_name"));
+    this.middleName          = Utils.toString(map.get("middle_name"));
+    this.nickname            = Utils.toString(map.get("nickname"));
+    this.preferredUsername   = Utils.toString(map.get("preferred_username"));
+    this.profile             = Utils.toString(map.get("profile"));
+    this.picture             = Utils.toString(map.get("picture"));
+    this.website             = Utils.toString(map.get("website"));
+    this.email               = Utils.toString(map.get("email"));
+    this.emailVerified       = Utils.toBoolean(map.get("email_verified"));
+    this.gender              = Utils.toString(map.get("gender"));
+    this.birthdate           = Utils.toString(map.get("birthdate"));
+    this.zoneinfo            = Utils.toString(map.get("zoneinfo"));
+    this.locale              = Utils.toString(map.get("locale"));
+    this.phoneNumber         = Utils.toString(map.get("phone_number"));
+    this.phoneNumberVerified = Utils.toBoolean(map.get("phone_number_verified"));
+    this.updatedAt           = Utils.toInt(map.get("updated_at"));
+    
+    Object objAddress = map.get("address");
+    if(objAddress instanceof Map) {
+      @SuppressWarnings("unchecked")
+      Map<String, Object> mapAddress = (Map<String, Object>) objAddress;
+      this.addressFormatted  = Utils.toString(mapAddress.get("formatted"));
+      this.addressStreet     = Utils.toString(mapAddress.get("street_address"));
+      this.addressLocality   = Utils.toString(mapAddress.get("locality"));
+      this.addressRegion     = Utils.toString(mapAddress.get("region"));
+      this.addressPostalCode = Utils.toString(mapAddress.get("postal_code"));
+      this.addressCountry    = Utils.toString(mapAddress.get("country"));
+    }
+  }
   
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>(18);

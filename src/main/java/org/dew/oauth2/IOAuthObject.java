@@ -5,6 +5,8 @@ import java.util.Map;
 public 
 interface IOAuthObject 
 {
+  public void fromMap(Map<String, Object> map);
+  
   public Map<String, Object> toMap();
 
   public String toQueryString();

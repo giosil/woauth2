@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 public 
 class AuthorizationResponse implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -5352209232102547902L;
+  private static final long serialVersionUID = 7571576495355471916L;
   
   private String code;
   private String state;
@@ -38,8 +38,7 @@ class AuthorizationResponse implements IOAuthObject, Serializable
   
   public AuthorizationResponse(Map<String, Object> map)
   {
-    this.code  = Utils.toString(map.get("code"));
-    this.state = Utils.toString(map.get("state"));
+    fromMap(map);
   }
 
   public String getCode() {
@@ -59,6 +58,14 @@ class AuthorizationResponse implements IOAuthObject, Serializable
   }
   
   // IOAuthObject
+  
+  @Override
+  public void fromMap(Map<String, Object> map) {
+    if(map == null) return;
+    
+    this.code  = Utils.toString(map.get("code"));
+    this.state = Utils.toString(map.get("state"));
+  }
   
   @Override
   public Map<String, Object> toMap() {
