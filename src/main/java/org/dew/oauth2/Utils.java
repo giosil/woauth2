@@ -39,7 +39,7 @@ class Utils
   public static
   String toQueryString(Map<String, Object> map)
   {
-    if(map == null) {
+    if(map == null || map.isEmpty()) {
       return "";
     }
     StringBuilder sb = new StringBuilder(map.size() * 2 * 8);
@@ -348,6 +348,89 @@ class Utils
     }
     sb.append('"');
     return sb.toString();
+  }
+  
+  public static
+  String getJSONVal(String jsonObject, String key, String defaultValue)
+  {
+    if(jsonObject == null || jsonObject.length() == 0 || jsonObject.indexOf('{') < 0) {
+      return defaultValue;
+    }
+    if(key == null || key.length() == 0) {
+      return defaultValue;
+    }
+    // Find key
+    int k = jsonObject.indexOf("\"" + key + "\"");
+    if(k < 0) {
+      return defaultValue;
+    }
+    // Separator key-value
+    int s = jsonObject.indexOf(':', k + key.length() + 2);
+    if(s < 0) {
+      return defaultValue;
+    }
+    // Find end value
+    int  e = -1;
+    // Previous char
+    char cp = '\0';
+    // String delimiter char
+    char cs = '\0';
+    // Is string?
+    boolean jsonString = false;
+    for(int i = s; i < jsonObject.length() - 1; i++) {
+      char c = jsonObject.charAt(i);
+      if(c == '"' && cp != '\\') {
+        if(jsonString) {
+          if(cs == '"') {
+            // End string
+            jsonString = false;
+          }
+        }
+        else {
+          // Start string
+          jsonString = true;
+          cs = '"';
+        }
+      }
+      else if(c == '\'' && cp != '\\') {
+        if(jsonString) {
+          if(cs == '\'') {
+            // End string
+            jsonString = false;
+          }
+        }
+        else {
+          // Start string
+          jsonString = true;
+          cs = '\'';
+        }
+      }
+      else if(c == ',' || c == '}') {
+        if(!jsonString) {
+          // End value found
+          e = i;
+          break;
+        }
+      }
+      // Set previous char
+      cp = c;
+    }
+    if(e < 0) {
+      e = jsonObject.length();
+    }
+    String value = jsonObject.substring(s + 1, e).trim();
+    if(value.equals("null")) {
+      return defaultValue;
+    }
+    // Strip string
+    if(value.startsWith("\"") && value.endsWith("\"")) {
+      value = value.substring(1, value.length() - 1);
+    }
+    else if(value.startsWith("'") && value.endsWith("'")) {
+      value = value.substring(1, value.length() - 1);
+    }
+    // Replace escape characters
+    return value.replace("\\n", "\n").replace("\\t", "\t");
   }
   
   public static

@@ -1,6 +1,6 @@
 # WOAuth2
 
-A simple OAuth 2.0 protocol implementation.
+A simple OAuth 2.0 protocol implementation. For further information see [IETF RFC 6749](https://tools.ietf.org/html/rfc6749).
 
 ## Build
 
