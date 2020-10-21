@@ -423,14 +423,14 @@ class Utils
       return defaultValue;
     }
     // Strip string
-    if(value.startsWith("\"") && value.endsWith("\"")) {
+    if(value.startsWith("\"") && value.endsWith("\"") && value.length() > 1) {
       value = value.substring(1, value.length() - 1);
     }
-    else if(value.startsWith("'") && value.endsWith("'")) {
+    else if(value.startsWith("'") && value.endsWith("'") && value.length() > 1) {
       value = value.substring(1, value.length() - 1);
     }
     // Replace escape characters
-    return value.replace("\\n", "\n").replace("\\t", "\t");
+    return value.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
   }
   
   public static
