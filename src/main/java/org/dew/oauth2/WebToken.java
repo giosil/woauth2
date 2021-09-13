@@ -21,10 +21,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * grant_type=password&username=admin&password=admin&client_id=test
  * 
- * <b>Response:</b>
+ * <b>Response with JSON Web Token:</b>
  * <pre>
  * {
- *   "access_token": "ea39e8df-b8c7-4024-9bdb-08b7ce808917",
+ *   "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoiZGV3In0.ktYpkVTu6UJj-GunFJV-xcFcpKt6h_ns6QxuZfC9Yjs",
  *   "token_type": "bearer",
  *   "expires_in": 3600,
  * }

@@ -41,11 +41,11 @@ Content-type: application/x-www-form-urlencoded
 grant_type=password&username=admin&password=pass1234&client_id=test
 ```
 
-**Response:**
+**Response with JSON Web Token:**
 
 ```json
 {
-  "access_token": "ea39e8df-b8c7-4024-9bdb-08b7ce808917",
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoiZGV3In0.ktYpkVTu6UJj-GunFJV-xcFcpKt6h_ns6QxuZfC9Yjs",
   "token_type": "bearer",
   "expires_in": 3600,
 }

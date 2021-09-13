@@ -9,8 +9,9 @@ public
 class BaseOAuth2 implements IOAuth2 
 {
   @Override
-  public OAuthError validateAuthorizationRequest(AuthorizationRequest authorizationRequest) {
-    
+  public 
+  OAuthError validateAuthorizationRequest(AuthorizationRequest authorizationRequest) 
+  {
     String responseType = authorizationRequest.getResponseType();
     String clientId     = authorizationRequest.getClientId();
     String clientSecret = authorizationRequest.getClientSecret();
@@ -54,8 +55,9 @@ class BaseOAuth2 implements IOAuth2
   }
   
   @Override
-  public OAuthError validateTokenRequest(TokenRequest tokenRequest) {
-    
+  public 
+  OAuthError validateTokenRequest(TokenRequest tokenRequest) 
+  {
     String grantType    = tokenRequest.getGrantType();
     String username     = tokenRequest.getUsername();
     String password     = tokenRequest.getPassword();
@@ -119,8 +121,10 @@ class BaseOAuth2 implements IOAuth2
   }
   
   @Override
-  public AuthorizationResponse requestAuthorization(AuthorizationRequest authorizationRequest) throws Exception {
-    
+  public 
+  AuthorizationResponse requestAuthorization(AuthorizationRequest authorizationRequest) 
+      throws Exception 
+  {
     String state = authorizationRequest.getState();
     
     if(state != null && state.length() > 0) {
@@ -131,8 +135,10 @@ class BaseOAuth2 implements IOAuth2
   }
   
   @Override
-  public TokenResponse requestToken(TokenRequest tokenRequest) throws Exception {
-    
+  public 
+  TokenResponse requestToken(TokenRequest tokenRequest) 
+      throws Exception 
+  {
     if(tokenRequest == null) return null;
     
     String grantType    = tokenRequest.getGrantType();
@@ -157,13 +163,25 @@ class BaseOAuth2 implements IOAuth2
   }
 
   @Override
-  public UserInfo getUserInfo(String token) throws Exception {
+  public 
+  UserInfo getUserInfo(String token) 
+      throws Exception 
+  {
+    String subject = verifyToken(token);
     
-    if(token == null || token.length() == 0) {
-      return null;
+    return new UserInfo(subject, "Test", "Dev", "admin", "test.dev@example.com");
+  }
+  
+  protected
+  String verifyToken(String token)
+  {
+    try {
+      return JWTManager.verifyToken(token);
     }
-    
-    return new UserInfo("12345", "Test", "Dev", "admin", "test.dev@example.com");
+    catch(Exception ex) {
+      System.err.println("BaseOAuth2.verifyToken(" + token + "): " + ex);
+    }
+    return null;
   }
   
   protected
@@ -193,7 +211,9 @@ class BaseOAuth2 implements IOAuth2
       return null;
     }
     
-    return UUID.randomUUID().toString();
+    String username = tokenRequest.getUsername();
+    
+    return JWTManager.createToken(username);
   }
   
   protected
@@ -213,7 +233,7 @@ class BaseOAuth2 implements IOAuth2
     }
     
     if(password.equals("pass1234")) {
-      return UUID.randomUUID().toString();
+      return JWTManager.createToken(username);
     }
     
     return null;
