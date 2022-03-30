@@ -324,6 +324,7 @@ class UserInfo implements IOAuthObject, Serializable
     }
   }
   
+  @Override
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>(18);
     mapResult.put("sub",                sub);

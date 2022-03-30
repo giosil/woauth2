@@ -189,6 +189,7 @@ class TokenResponse implements IOAuthObject, Serializable
     }
   }
   
+  @Override
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     if(parameters != null && !parameters.isEmpty()) {

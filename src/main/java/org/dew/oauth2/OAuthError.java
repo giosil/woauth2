@@ -136,6 +136,7 @@ class OAuthError implements IOAuthObject, Serializable
     this.state            = Utils.toString(map.get("state"));
   }
   
+  @Override
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     mapResult.put("error",             error);

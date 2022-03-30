@@ -169,6 +169,7 @@ class TokenRequest implements IOAuthObject, Serializable
     this.redirectURI  = Utils.toString(map.get("redirect_uri"));
   }
   
+  @Override
   public Map<String, Object> toMap() {
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     mapResult.put("grant_type",    grantType);
