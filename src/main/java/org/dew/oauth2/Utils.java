@@ -1,8 +1,18 @@
 package org.dew.oauth2;
 
 import java.lang.reflect.Array;
+
 import java.net.URLEncoder;
-import java.util.*;
+
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Utilities.
@@ -10,6 +20,56 @@ import java.util.*;
 public 
 class Utils 
 {
+  public static
+  String encodeBase64URLVariant(byte[] arrayOfBytes)
+  {
+    if(arrayOfBytes == null || arrayOfBytes.length == 0) {
+      return "";
+    }
+    String b64 =  new String(Base64Coder.encode(arrayOfBytes));
+    // Base64 URL Variant
+    String result = b64.replace('+', '-').replace('/', '_');
+    if(result.endsWith("==")) return result.substring(0, result.length()-2);
+    if(result.endsWith("="))  return result.substring(0, result.length()-1);
+    return result;
+  }
+  
+  public static
+  String generateState() 
+  {
+    SecureRandom secureRandom = new SecureRandom();
+    byte[] arrayOfRandomBytes = new byte[24];
+    secureRandom.nextBytes(arrayOfRandomBytes);
+    return encodeBase64URLVariant(arrayOfRandomBytes);
+  }
+  
+  // PKCE (Proof Key for Code Exchange)
+  public static
+  String generateCodeVerifier() 
+  {
+    SecureRandom secureRandom = new SecureRandom();
+    byte[] arrayOfRandomBytes = new byte[32];
+    secureRandom.nextBytes(arrayOfRandomBytes);
+    return encodeBase64URLVariant(arrayOfRandomBytes);
+  }
+  
+  // PKCE (Proof Key for Code Exchange)
+  public static
+  String generateCodeChallange(String codeVerifier)
+  {
+    try {
+      byte[] bytes = codeVerifier.getBytes("US-ASCII");
+      MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+      messageDigest.update(bytes, 0, bytes.length);
+      byte[] digest = messageDigest.digest();
+      return encodeBase64URLVariant(digest);
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+    return "";
+  }
+  
   public static
   String encode(Object value)
   {

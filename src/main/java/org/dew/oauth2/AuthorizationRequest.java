@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 public 
 class AuthorizationRequest implements IOAuthObject, Serializable
 {
-  private static final long serialVersionUID = -7301587844052799362L;
-  
+  private static final long serialVersionUID = 2789256061457285025L;
+
   private String responseType;  // REQUIRED
   private String clientId;      // REQUIRED
   private String clientSecret;  // OPTIONAL
@@ -21,6 +21,9 @@ class AuthorizationRequest implements IOAuthObject, Serializable
   private String nonce;         // OPTIONAL
   private String login_hint;    // OPTIONAL (example: user name, email)
   private String hd;            // OPTIONAL (hosted domain)
+  // PKCE (Proof Key for Code Exchange)
+  private String codeChallenge;       // OPTIONAL (Base64 URL variant of SHA-256 of code_verifier)
+  private String codeChallengeMethod; // OPTIONAL (example: S256)
   
   public AuthorizationRequest()
   {
@@ -46,6 +49,9 @@ class AuthorizationRequest implements IOAuthObject, Serializable
     this.nonce        = request.getParameter("nonce");
     this.login_hint   = request.getParameter("login_hint");
     this.hd           = request.getParameter("hd");
+    // PKCE (Proof Key for Code Exchange)
+    this.codeChallenge       = request.getParameter("code_challenge");
+    this.codeChallengeMethod = request.getParameter("code_challenge_method");
     
     if(responseType == null || responseType.length() == 0) {
       responseType = "code";
@@ -130,8 +136,24 @@ class AuthorizationRequest implements IOAuthObject, Serializable
     this.hd = hd;
   }
   
+  public String getCodeChallenge() {
+    return codeChallenge;
+  }
+
+  public void setCodeChallenge(String codeChallenge) {
+    this.codeChallenge = codeChallenge;
+  }
+
+  public String getCodeChallengeMethod() {
+    return codeChallengeMethod;
+  }
+
+  public void setCodeChallengeMethod(String codeChallengeMethod) {
+    this.codeChallengeMethod = codeChallengeMethod;
+  }
+
   // IOAuthObject
-  
+
   @Override
   public void fromMap(Map<String, Object> map) {
     if(map == null) return;
@@ -145,6 +167,9 @@ class AuthorizationRequest implements IOAuthObject, Serializable
     this.nonce        = Utils.toString(map.get("nonce"));
     this.login_hint   = Utils.toString(map.get("login_hint"));
     this.hd           = Utils.toString(map.get("hd"));
+    // PKCE (Proof Key for Code Exchange)
+    this.codeChallenge       = Utils.toString(map.get("code_challenge"));
+    this.codeChallengeMethod = Utils.toString(map.get("code_challenge_method"));
     
     if(responseType == null || responseType.length() == 0) {
       responseType = "code";
@@ -166,6 +191,9 @@ class AuthorizationRequest implements IOAuthObject, Serializable
     mapResult.put("nonce",         nonce);
     mapResult.put("login_hint",    login_hint);
     mapResult.put("hd",            hd);
+    // PKCE (Proof Key for Code Exchange)
+    mapResult.put("code_challenge",        codeChallenge);
+    mapResult.put("code_challenge_method", codeChallengeMethod);
     return mapResult;
   }
   
