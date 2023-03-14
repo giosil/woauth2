@@ -61,7 +61,7 @@ class Utils
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
       messageDigest.update(bytes, 0, bytes.length);
       byte[] digest = messageDigest.digest();
-      // java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(arrayOfRandomBytes)
+      // java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(digest)
       return toBase64URLEncoded(digest);
     }
     catch(Exception ex) {
