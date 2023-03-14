@@ -315,6 +315,6 @@ class OAuth2Client
   
   @Override
   public String toString() {
-    return "OAuthClient(" + urlTokenRequest + "," + urlGetUserInfo + ")";
+    return "OAuth2Client(" + urlTokenRequest + "," + urlGetUserInfo + ")";
   }
 }

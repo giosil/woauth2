@@ -21,17 +21,14 @@ public
 class Utils 
 {
   public static
-  String encodeBase64URLVariant(byte[] arrayOfBytes)
+  String toBase64URLEncoded(byte[] arrayOfBytes)
   {
     if(arrayOfBytes == null || arrayOfBytes.length == 0) {
       return "";
     }
     String b64 =  new String(Base64Coder.encode(arrayOfBytes));
     // Base64 URL Variant
-    String result = b64.replace('+', '-').replace('/', '_');
-    if(result.endsWith("==")) return result.substring(0, result.length()-2);
-    if(result.endsWith("="))  return result.substring(0, result.length()-1);
-    return result;
+    return b64.replace('+', '-').replace('/', '_').replace("=", "");
   }
   
   public static
@@ -40,7 +37,8 @@ class Utils
     SecureRandom secureRandom = new SecureRandom();
     byte[] arrayOfRandomBytes = new byte[24];
     secureRandom.nextBytes(arrayOfRandomBytes);
-    return encodeBase64URLVariant(arrayOfRandomBytes);
+    // java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(arrayOfRandomBytes)
+    return toBase64URLEncoded(arrayOfRandomBytes);
   }
   
   // PKCE (Proof Key for Code Exchange)
@@ -50,7 +48,8 @@ class Utils
     SecureRandom secureRandom = new SecureRandom();
     byte[] arrayOfRandomBytes = new byte[32];
     secureRandom.nextBytes(arrayOfRandomBytes);
-    return encodeBase64URLVariant(arrayOfRandomBytes);
+    // java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(arrayOfRandomBytes)
+    return toBase64URLEncoded(arrayOfRandomBytes);
   }
   
   // PKCE (Proof Key for Code Exchange)
@@ -62,7 +61,8 @@ class Utils
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
       messageDigest.update(bytes, 0, bytes.length);
       byte[] digest = messageDigest.digest();
-      return encodeBase64URLVariant(digest);
+      // java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(arrayOfRandomBytes)
+      return toBase64URLEncoded(digest);
     }
     catch(Exception ex) {
       ex.printStackTrace();

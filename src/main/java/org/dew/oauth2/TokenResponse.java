@@ -22,7 +22,7 @@ class TokenResponse implements IOAuthObject, Serializable
   private String state;         // REQUIRED if present in the client authorization request.
   private String idToken;       // OPTIONAL (JSON Web Token)
   // Extension
-  private Map<String,Object> parameters; // OPTIONAL
+  private Map<String, Object> parameters; // OPTIONAL
   
   public TokenResponse()
   {

@@ -7,6 +7,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 
+ * Authorization response bean.
+ * See OAuthError in case of error response.
+ *
+ */
 public 
 class AuthorizationResponse implements IOAuthObject, Serializable
 {
@@ -14,8 +20,6 @@ class AuthorizationResponse implements IOAuthObject, Serializable
 
   private String code;
   private String state;
-  private String error;
-  private String errorDescription;
   
   public AuthorizationResponse()
   {
@@ -36,8 +40,6 @@ class AuthorizationResponse implements IOAuthObject, Serializable
   {
     this.code  = request.getParameter("code");
     this.state = request.getParameter("state");
-    this.error = request.getParameter("error");
-    this.errorDescription = request.getParameter("error_description");
   }
   
   public AuthorizationResponse(Map<String, Object> map)
@@ -60,22 +62,6 @@ class AuthorizationResponse implements IOAuthObject, Serializable
   public void setState(String state) {
     this.state = state;
   }
-  
-  public String getError() {
-    return error;
-  }
-
-  public void setError(String error) {
-    this.error = error;
-  }
-
-  public String getErrorDescription() {
-    return errorDescription;
-  }
-
-  public void setErrorDescription(String errorDescription) {
-    this.errorDescription = errorDescription;
-  }
 
   // IOAuthObject
 
@@ -85,8 +71,6 @@ class AuthorizationResponse implements IOAuthObject, Serializable
     
     this.code  = Utils.toString(map.get("code"));
     this.state = Utils.toString(map.get("state"));
-    this.error = Utils.toString(map.get("error"));
-    this.errorDescription = Utils.toString(map.get("error_description"));
   }
   
   @Override
@@ -94,8 +78,6 @@ class AuthorizationResponse implements IOAuthObject, Serializable
     Map<String, Object> mapResult = new LinkedHashMap<String, Object>();
     mapResult.put("code",  code);
     mapResult.put("state", state);
-    mapResult.put("error", error);
-    mapResult.put("error_description", errorDescription);
     return mapResult;
   }
   
@@ -134,6 +116,6 @@ class AuthorizationResponse implements IOAuthObject, Serializable
   
   @Override
   public String toString() {
-    return "TokenResponse(" + code + "," + state + ")";
+    return "AuthorizationResponse(" + code + "," + state + ")";
   }
 }
