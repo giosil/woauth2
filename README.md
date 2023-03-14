@@ -1,11 +1,13 @@
 # WOAuth2
 
 A simple OAuth 2.0 protocol implementation. For further information see [IETF RFC 6749](https://tools.ietf.org/html/rfc6749).
+PKCE (Proof Key for Code Exchange, RFC 7636) is supported.
 
 ## Build
 
 - `git clone https://github.com/giosil/woauth2.git`
 - `mvn clean install`
+- `mvn dependency:copy-dependencies` to copy dependencies
 
 ## Request Authorization
 
