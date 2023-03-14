@@ -35,7 +35,7 @@ class Utils
   String generateState() 
   {
     SecureRandom secureRandom = new SecureRandom();
-    byte[] arrayOfRandomBytes = new byte[24];
+    byte[] arrayOfRandomBytes = new byte[16];
     secureRandom.nextBytes(arrayOfRandomBytes);
     // java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(arrayOfRandomBytes)
     return toBase64URLEncoded(arrayOfRandomBytes);
